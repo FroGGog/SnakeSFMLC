@@ -1,5 +1,7 @@
 #include "headers/Game.h"
 
+//TODO :: SNAKE HEAD GOES AWAY BY ITSELF FIX IT
+
 Game::Game()
 {
 	this->initVars();
@@ -35,11 +37,11 @@ const bool Game::windowOpen() const
 
 void Game::update()
 {
-
+	
 	this->updateEvents();
 
 	if (this->applesCount == 0) {
-
+		this->spawnApple();
 	}
 
 	this->updateBody();
@@ -72,9 +74,9 @@ void Game::updateBody()
 	for (size_t i{ 0 }; i < this->snakeBody.size(); ++i){
 
 		turned = this->snakeBody[i]->update(this->turnPoints, *this->window);
-
-		if (turned && i == this->snakeBody.size() - 1 && this->turnPoints.size() > this->snakeBody.size() * 2) {
-			std::cout << this->turnPoints.size() << '\n';
+		//check if last tail has completed last turn point (which is first in vector)
+		if (turned && i == this->snakeBody.size() - 1 && this->turnPoints.size() > this->snakeBody.size() * 5) {
+			//erase used turn points
 			this->turnPoints.erase(this->turnPoints.begin());
 		}
 		
@@ -88,9 +90,14 @@ void Game::updateHeadApplesColl()
 		if (this->snakeHead->getBounds().intersects(this->apple->getBound())) {
 			//eat apple
 			this->applesCount--;
+			delete this->apple;
+			//add tail after eating apple
 			this->addTail();
 			this->apple = nullptr;
 		}
+	}
+	else {
+		return;
 	}
 
 
@@ -100,6 +107,7 @@ void Game::render()
 {
 	this->window->clear();
 
+	//if apple exist on screen render it
 	if (this->apple != nullptr) {
 		this->apple->render(*this->window);
 	}
@@ -140,11 +148,8 @@ void Game::initSnakeHeadAndBody()
 {
 	this->snakeHead = new SnakeHead();
 
+	//first body part
 	this->snakeBody.push_back(new Body(this->textures["BODY"], 114.f, 50.f, DIR_X::RIGHT, DIR_Y::ZERO_Y));
-
-	this->apple = new Apple(this->textures["APPLES"], *this->window);
-
-	this->applesCount++;
 
 }
 
@@ -187,5 +192,31 @@ void Game::addTail()
 	
 	this->snakeBody.push_back(new Body(this->textures["BODY"], spawn_pos_X, spawn_pos_Y, dir_x, dir_y));
 
+
+}
+
+void Game::spawnApple()
+{
+	if (this->applesCount > 0) {
+		return;
+	}
+	bool canSpawn = false;
+	//search spot for new apple
+	this->apple = new Apple(this->textures["APPLES"], *this->window);
+	while (canSpawn == false) {
+		for (auto& i : this->snakeBody) {
+			//if apple intersects with any body part try new pos
+			if (i->getBounds().intersects(this->apple->getBound())) {
+				canSpawn = false;
+				this->apple->randomPos(*this->window);
+			}
+			else {
+				canSpawn = true;
+				this->applesCount++;
+				return;
+				std::cout << "SPAWN : " << this->applesCount << '\n';
+			}
+		}
+	}
 
 }

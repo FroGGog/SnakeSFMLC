@@ -42,6 +42,7 @@ void SnakeHead::update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& ta
 
 TurnPoint SnakeHead::addTurnPoint(DIR_X dir_x, DIR_Y dir_y)
 {
+	//when head moves to another dir create new way point for body parts
 	TurnPoint tempPoint{ dir_x, dir_y, this->headSprite.getPosition() };
 
 
@@ -145,7 +146,9 @@ void SnakeHead::initTexture()
 
 	this->headSprite.setRotation(90);
 
+
 }
+
 
 void SnakeHead::initVars()
 {
@@ -153,8 +156,6 @@ void SnakeHead::initVars()
 	this->direction = sf::Vector2f(this->speed, 0.f);
 
 	this->isPressed = false;
-
-
 
 }
 

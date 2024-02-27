@@ -25,23 +25,27 @@ public:
 	//accessors
 	const sf::FloatRect getBounds() const;
 
-
+	//update
 	void update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& target);
 	void updateSnakeMovement(std::vector <TurnPoint>& turnPoints);
 	void updateBorderCol(sf::RenderTarget& target);
 
+	//render
 	void render(sf::RenderTarget& target);
 
 private:
 
+	//texture and sprite
 	sf::Texture headTexture;
 	sf::Sprite headSprite;
 
+	//vars
 	sf::Vector2f direction;
 	
 	float speed;
 	bool isPressed;
 
+	//functions
 	void initTexture();
 	void initVars();
 

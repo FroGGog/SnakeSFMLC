@@ -40,20 +40,21 @@ private:
 
 	Apple* apple;
 
+	SnakeHead* snakeHead;
+
 	std::vector <TurnPoint> turnPoints;
 
 	//resources
 	std::map<std::string, sf::Texture*> textures;
 
-	SnakeHead* snakeHead;
-
-	unsigned applesCount;
+	int applesCount;
 
 	void initVars();
 	void initWindow();
 	void initSnakeHeadAndBody();
 	void initTextures();
 	void addTail();
+	void spawnApple();
 
 
 };

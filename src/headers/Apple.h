@@ -13,11 +13,13 @@ public:
 	const sf::FloatRect getBound() const;
 
 
-	void update();
-
 	void render(sf::RenderTarget& target);
 
+	void randomPos(sf::RenderTarget& target);
+
 private:
+
+	//vars
 
 	sf::Sprite sprite;
 
@@ -25,7 +27,7 @@ private:
 
 	bool spawned;
 
-	void randomPos(sf::RenderTarget& target);
+	
 
 };
 

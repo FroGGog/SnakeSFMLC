@@ -33,11 +33,18 @@ const sf::Vector2f Body::getDir() const
 	return this->direction;
 }
 
+const sf::FloatRect Body::getBounds() const
+{
+	return this->Bsprite.getGlobalBounds();
+}
+
 
 bool Body::update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& target)
 {
+	//check if collide any border of screen
 	this->updateBorderCol(target);
 
+	//if we are turning another way we must change rotation and return true, that this body part has turned
 	if (this->updateMoveDir(turnPoints)) {
 		this->updateRotation();
 		this->Bsprite.move(this->direction);
@@ -52,10 +59,9 @@ bool Body::update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& target)
 }
 
 
-
-
 bool Body::updateMoveDir(std::vector <TurnPoint>& turnPoints)
 {
+	//check all turn points, if body part is on one of them change it direction to turn point saved direction
 	for (auto& point : turnPoints) {
 		if (this->Bsprite.getPosition().x == point.position.x && this->Bsprite.getPosition().y == point.position.y) {
 			this->direction.x = point.dir.x;
@@ -80,7 +86,8 @@ void Body::updateBorderCol(sf::RenderTarget& target)
 			this->Bsprite.setPosition(target.getSize().x, this->Bsprite.getPosition().y);
 		}
 	}
-	else {
+	else { //that means we are moving up or down
+		//up
 		if (this->Bsprite.getGlobalBounds().top + this->Bsprite.getGlobalBounds().height < 0) {
 			this->Bsprite.setPosition(this->Bsprite.getPosition().x, target.getSize().y);
 		}
@@ -89,35 +96,29 @@ void Body::updateBorderCol(sf::RenderTarget& target)
 			this->Bsprite.setPosition(this->Bsprite.getPosition().x, 0.f);
 		}
 	}
-	
-	//up
-	
-	
 
 }
 
-
 void Body::updateRotation()
 {
-
+	//right
 	if (this->direction.x > 0) {
 		this->Bsprite.setRotation(90);
 	}
+	//left
 	else if (this->direction.x < 0) {
 		this->Bsprite.setRotation(270);
 	}
-
+	//down
 	if (this->direction.y > 0) {
 		this->Bsprite.setRotation(180);
 	}
+	//up
 	else if (this->direction.y < 0) {
 		this->Bsprite.setRotation(0);
 	}
 
 }
-
-
-
 
 void Body::render(sf::RenderTarget& target)
 {
