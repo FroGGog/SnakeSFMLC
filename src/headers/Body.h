@@ -10,10 +10,13 @@ public:
 	virtual ~Body();
 
 	const sf::Vector2f getPos() const;
+	const sf::Vector2f getDir() const;
 
-	bool update(std::vector <TurnPoint>& turnPoints);
+
+	bool update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& target);
 	void updateRotation();
 	bool updateMoveDir(std::vector<TurnPoint>& turnPoints);
+	void updateBorderCol(sf::RenderTarget& target);
 
 	void render(sf::RenderTarget &target);
 

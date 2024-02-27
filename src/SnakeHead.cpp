@@ -22,24 +22,21 @@ SnakeHead::~SnakeHead()
 
 }
 
-//return previous position of head
-const sf::Vector2f& SnakeHead::getPos() const
+const sf::FloatRect SnakeHead::getBounds() const
 {
-	return this->headSprite.getPosition();
-}
-
-const sf::Vector2f& SnakeHead::getDir() const
-{
-	return this->direction;
-
+	return this->headSprite.getGlobalBounds();
 }
 
 
-void SnakeHead::update(std::vector <TurnPoint>& turnPoints)
+
+void SnakeHead::update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& target)
 {
-	this->updateSnakeMovement(turnPoints);
+
+	this->updateBorderCol(target);
 	
 	this->headSprite.move(this->direction);
+
+	this->updateSnakeMovement(turnPoints);
 
 }
 
@@ -93,6 +90,37 @@ void SnakeHead::updateSnakeMovement(std::vector <TurnPoint>& turnPoints)
 		turnPoints.push_back(this->addTurnPoint(DIR_X::ZERO_X, DIR_Y::DOWN));
 	}
 
+
+}
+
+void SnakeHead::updateBorderCol(sf::RenderTarget& target)
+{
+	float gap{ 12.f };//when head cross srcrenn border it goes to far away from body, this fixes it
+
+
+	if (this->direction.x != 0) {
+		//right
+		if (this->headSprite.getGlobalBounds().left > target.getSize().x) {
+			this->headSprite.setPosition(-gap, this->headSprite.getPosition().y);
+		}
+
+		//left side
+		else if (this->headSprite.getGlobalBounds().left + this->headSprite.getGlobalBounds().width < 0) {
+			this->headSprite.setPosition(target.getSize().x + gap, this->headSprite.getPosition().y);
+		}
+	}
+	else {
+		//up
+		if (this->headSprite.getGlobalBounds().top + this->headSprite.getGlobalBounds().height < 0) {
+			this->headSprite.setPosition(this->headSprite.getPosition().x, target.getSize().y + gap);
+		}
+		//down
+		else if (this->headSprite.getGlobalBounds().top > target.getSize().y) {
+			this->headSprite.setPosition(this->headSprite.getPosition().x, -gap);
+		}
+	}
+	
+	
 
 }
 

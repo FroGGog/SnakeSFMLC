@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Apple.cpp" />
     <ClCompile Include="src\Body.cpp" />
     <ClCompile Include="src\SnakeHead.cpp" />
     <ClCompile Include="src\Game.cpp" />
@@ -150,6 +151,7 @@
     <None Include="sfml-window-d-2.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\headers\Apple.h" />
     <ClInclude Include="src\headers\Body.h" />
     <ClInclude Include="src\headers\SnakeHead.h" />
     <ClInclude Include="src\headers\Game.h" />

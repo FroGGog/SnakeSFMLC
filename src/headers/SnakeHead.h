@@ -23,12 +23,12 @@ public:
 	virtual ~SnakeHead();
 
 	//accessors
-	const sf::Vector2f& getPos() const;
-	const sf::Vector2f& getDir() const;
+	const sf::FloatRect getBounds() const;
 
 
-	void update(std::vector <TurnPoint>& turnPoints);
+	void update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& target);
 	void updateSnakeMovement(std::vector <TurnPoint>& turnPoints);
+	void updateBorderCol(sf::RenderTarget& target);
 
 	void render(sf::RenderTarget& target);
 

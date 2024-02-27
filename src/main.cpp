@@ -1,10 +1,11 @@
 #include "headers/Game.h"
-
+#include <ctime>
 
 int main()
 {
-    Game game;
+    srand(time(0));
 
+    Game game;
 
     while (game.windowOpen()) {
         game.update();

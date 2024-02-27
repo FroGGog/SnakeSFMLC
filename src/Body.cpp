@@ -14,6 +14,8 @@ Body::Body(sf::Texture* texture, float pos_x, float pos_y, float dir_x, float di
 	this->Bsprite.setOrigin(this->Bsprite.getGlobalBounds().width / 2, this->Bsprite.getGlobalBounds().height / 2);
 
 	this->Bsprite.setScale(1.5f, 1.5f);
+
+	this->Bsprite.setRotation(90);
 }
 
 Body::~Body()
@@ -26,9 +28,16 @@ const sf::Vector2f Body::getPos() const
 	return this->Bsprite.getPosition();
 }
 
-
-bool Body::update(std::vector <TurnPoint>& turnPoints)
+const sf::Vector2f Body::getDir() const
 {
+	return this->direction;
+}
+
+
+bool Body::update(std::vector <TurnPoint>& turnPoints, sf::RenderTarget& target)
+{
+	this->updateBorderCol(target);
+
 	if (this->updateMoveDir(turnPoints)) {
 		this->updateRotation();
 		this->Bsprite.move(this->direction);
@@ -42,6 +51,9 @@ bool Body::update(std::vector <TurnPoint>& turnPoints)
 	
 }
 
+
+
+
 bool Body::updateMoveDir(std::vector <TurnPoint>& turnPoints)
 {
 	for (auto& point : turnPoints) {
@@ -52,6 +64,35 @@ bool Body::updateMoveDir(std::vector <TurnPoint>& turnPoints)
 		}
 	}
 	return false;
+
+}
+
+void Body::updateBorderCol(sf::RenderTarget& target)
+{
+	if (this->direction.x != 0) {
+		//right side of screnn
+		if (this->Bsprite.getGlobalBounds().left > target.getSize().x) {
+			this->Bsprite.setPosition(0.f, this->Bsprite.getPosition().y);
+		}
+
+		//left side
+		else if (this->Bsprite.getGlobalBounds().left + this->Bsprite.getGlobalBounds().width < 0) {
+			this->Bsprite.setPosition(target.getSize().x, this->Bsprite.getPosition().y);
+		}
+	}
+	else {
+		if (this->Bsprite.getGlobalBounds().top + this->Bsprite.getGlobalBounds().height < 0) {
+			this->Bsprite.setPosition(this->Bsprite.getPosition().x, target.getSize().y);
+		}
+		//down
+		else if (this->Bsprite.getGlobalBounds().top > target.getSize().y) {
+			this->Bsprite.setPosition(this->Bsprite.getPosition().x, 0.f);
+		}
+	}
+	
+	//up
+	
+	
 
 }
 

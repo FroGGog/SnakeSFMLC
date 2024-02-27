@@ -6,7 +6,7 @@ Game::Game()
 	this->initWindow();
 	this->initTextures();
 
-	this->initSnakeHead();
+	this->initSnakeHeadAndBody();
 }
 
 Game::~Game()
@@ -14,10 +14,6 @@ Game::~Game()
 	delete this->window;
 
 	delete this->snakeHead;
-	
-	delete this->body1;
-
-	delete this->body2;
 
 	//delete textures
 	for (auto& i : this->textures) {
@@ -28,6 +24,8 @@ Game::~Game()
 	for (auto* i : this->snakeBody) {
 		delete i;
 	}
+
+	delete apple;
 }
 
 const bool Game::windowOpen() const
@@ -40,9 +38,15 @@ void Game::update()
 
 	this->updateEvents();
 
-	this->snakeHead->update(this->turnPoints);
+	if (this->applesCount == 0) {
+
+	}
 
 	this->updateBody();
+
+	this->snakeHead->update(this->turnPoints, *this->window);
+
+	this->updateHeadApplesColl();
 
 }
 
@@ -67,9 +71,9 @@ void Game::updateBody()
 	
 	for (size_t i{ 0 }; i < this->snakeBody.size(); ++i){
 
-		turned = this->snakeBody[i]->update(this->turnPoints);
+		turned = this->snakeBody[i]->update(this->turnPoints, *this->window);
 
-		if (turned && i == this->snakeBody.size() - 1 && this->turnPoints.size() > this->snakeBody.size() + 1) {
+		if (turned && i == this->snakeBody.size() - 1 && this->turnPoints.size() > this->snakeBody.size() * 2) {
 			std::cout << this->turnPoints.size() << '\n';
 			this->turnPoints.erase(this->turnPoints.begin());
 		}
@@ -78,11 +82,30 @@ void Game::updateBody()
 
 }
 
+void Game::updateHeadApplesColl()
+{
+	if (this->apple != nullptr) {
+		if (this->snakeHead->getBounds().intersects(this->apple->getBound())) {
+			//eat apple
+			this->applesCount--;
+			this->addTail();
+			this->apple = nullptr;
+		}
+	}
+
+
+}
+
 void Game::render()
 {
 	this->window->clear();
 
-	//render stuf
+	if (this->apple != nullptr) {
+		this->apple->render(*this->window);
+	}
+	
+
+	//render snake stuff
 	this->snakeHead->render(*this->window);
 	this->renderBody();
 
@@ -99,6 +122,8 @@ void Game::renderBody()
 void Game::initVars()
 {
 	this->window = nullptr;
+
+	this->applesCount = 0;
 }
 
 void Game::initWindow()
@@ -111,22 +136,15 @@ void Game::initWindow()
 	
 }
 
-void Game::initSnakeHead()
+void Game::initSnakeHeadAndBody()
 {
 	this->snakeHead = new SnakeHead();
 
-	this->body1 = new Body(this->textures["BODY"], 6.f, 50.f, DIR_X::RIGHT, DIR_Y::ZERO_Y);
+	this->snakeBody.push_back(new Body(this->textures["BODY"], 114.f, 50.f, DIR_X::RIGHT, DIR_Y::ZERO_Y));
 
-	this->body2 = new Body(this->textures["BODY"], 42.f, 50.f, DIR_X::RIGHT, DIR_Y::ZERO_Y);
+	this->apple = new Apple(this->textures["APPLES"], *this->window);
 
-	this->body3 = new Body(this->textures["BODY"], 78.f, 50.f, DIR_X::RIGHT, DIR_Y::ZERO_Y);
-
-	this->body4 = new Body(this->textures["BODY"], 114.f, 50.f, DIR_X::RIGHT, DIR_Y::ZERO_Y);
-
-	this->snakeBody.push_back(this->body1);
-	this->snakeBody.push_back(this->body2);
-	this->snakeBody.push_back(this->body3);
-	this->snakeBody.push_back(this->body4);
+	this->applesCount++;
 
 }
 
@@ -136,5 +154,38 @@ void Game::initTextures()
 	if (!this->textures["BODY"]->loadFromFile("src/textures/snake_body.png")) {
 		std::cout << "ERROR::LOAD::error while loading snake_body.png\n";
 	}
+
+	this->textures["APPLES"] = new sf::Texture;
+	if (!this->textures["APPLES"]->loadFromFile("src/textures/apple.png")) {
+		std::cout << "ERROR::LOAD::error while loading apple.png\n";
+	}
+
+}
+
+void Game::addTail()
+{
+	//checks where last tail going and depending on it spawns new tail
+	float spawn_pos_X{0.f};
+	float spawn_pos_Y{0.f};
+
+	float dir_x = this->snakeBody[this->snakeBody.size() - 1]->getDir().x;
+	float dir_y = this->snakeBody[this->snakeBody.size() - 1]->getDir().y;
+
+	//calculate new tail pos
+	if (this->snakeBody[this->snakeBody.size() - 1]->getDir().x != 0) {
+
+		spawn_pos_X = this->snakeBody[this->snakeBody.size() - 1]->getDir().x > 0 ? this->snakeBody[this->snakeBody.size() - 1]->getPos().x - 36 :
+			this->snakeBody[this->snakeBody.size() - 1]->getPos().x + 36;
+		spawn_pos_Y = this->snakeBody[this->snakeBody.size() - 1]->getPos().y;
+
+	}
+	else {
+		spawn_pos_X = this->snakeBody[this->snakeBody.size() - 1]->getPos().x;
+		spawn_pos_Y = this->snakeBody[this->snakeBody.size() - 1]->getDir().y > 0 ? this->snakeBody[this->snakeBody.size() - 1]->getPos().y - 36 :
+			this->snakeBody[this->snakeBody.size() - 1]->getPos().y + 36;
+	}
+	
+	this->snakeBody.push_back(new Body(this->textures["BODY"], spawn_pos_X, spawn_pos_Y, dir_x, dir_y));
+
 
 }

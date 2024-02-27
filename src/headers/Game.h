@@ -6,6 +6,7 @@
 
 #include "headers/SnakeHead.h"
 #include "headers/Body.h"
+#include "headers/Apple.h"
 
 class Game
 {
@@ -21,6 +22,7 @@ public:
 	void update();
 	void updateEvents();
 	void updateBody();
+	void updateHeadApplesColl();
 
 	//all render staff
 	void render();
@@ -35,10 +37,8 @@ private:
 
 	//storage
 	std::vector<Body*> snakeBody;
-	Body* body1;
-	Body* body2;
-	Body* body3;
-	Body* body4;
+
+	Apple* apple;
 
 	std::vector <TurnPoint> turnPoints;
 
@@ -47,10 +47,13 @@ private:
 
 	SnakeHead* snakeHead;
 
+	unsigned applesCount;
+
 	void initVars();
 	void initWindow();
-	void initSnakeHead();
+	void initSnakeHeadAndBody();
 	void initTextures();
+	void addTail();
 
 
 };
