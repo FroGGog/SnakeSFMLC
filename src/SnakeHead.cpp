@@ -135,7 +135,7 @@ void SnakeHead::render(sf::RenderTarget &target)
 
 void SnakeHead::initTexture()
 {
-	if (!this->headTexture.loadFromFile("src/textures/snake_head.png")) {
+	if (!this->headTexture.loadFromFile("textures/snake_head.png")) {
 		std::cout << "ERROR::LOADFROMFILE::SNAKE_HEAD\n";
 	}
 	this->headSprite.setTexture(this->headTexture);

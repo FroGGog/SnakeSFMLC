@@ -60,6 +60,7 @@ void Game::updateEvents()
 		{
 		case sf::Event::Closed:
 			this->window->close();
+			break;
 		default:
 			break;
 		}
@@ -156,12 +157,12 @@ void Game::initSnakeHeadAndBody()
 void Game::initTextures()
 {
 	this->textures["BODY"] = new sf::Texture;
-	if (!this->textures["BODY"]->loadFromFile("src/textures/snake_body.png")) {
+	if (!this->textures["BODY"]->loadFromFile("textures/snake_body.png")) {
 		std::cout << "ERROR::LOAD::error while loading snake_body.png\n";
 	}
 
 	this->textures["APPLES"] = new sf::Texture;
-	if (!this->textures["APPLES"]->loadFromFile("src/textures/apple.png")) {
+	if (!this->textures["APPLES"]->loadFromFile("textures/apple.png")) {
 		std::cout << "ERROR::LOAD::error while loading apple.png\n";
 	}
 
